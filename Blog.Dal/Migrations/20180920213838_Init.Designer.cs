@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blog.Dal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180920174542_Init")]
+    [Migration("20180920213838_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,137 @@ namespace Blog.Dal.Migrations
                 .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Blog.Model.Entities.BlogPost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Attachments");
+
+                    b.Property<int>("CategoryId");
+
+                    b.Property<string>("Content");
+
+                    b.Property<int>("CreatedById");
+
+                    b.Property<string>("CreatedById1");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("FeaturedImage");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<Guid>("LastModifiedById");
+
+                    b.Property<string>("LastModifiedById1");
+
+                    b.Property<DateTime>("LastModifiedDate");
+
+                    b.Property<string>("Title");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedById1");
+
+                    b.HasIndex("LastModifiedById1");
+
+                    b.ToTable("BlogPosts");
+                });
+
+            modelBuilder.Entity("Blog.Model.Entities.Category", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Blog.Model.Entities.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("BlogPostId");
+
+                    b.Property<Guid?>("BlogPostId1");
+
+                    b.Property<Guid>("CreatedById");
+
+                    b.Property<string>("CreatedById1");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<Guid>("LastModifiedById");
+
+                    b.Property<string>("LastModifiedById1");
+
+                    b.Property<DateTime>("LastModifiedDate");
+
+                    b.Property<string>("Text");
+
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("UserId1");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogPostId1");
+
+                    b.HasIndex("CreatedById1");
+
+                    b.HasIndex("LastModifiedById1");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Blog.Model.Entities.Favorite", b =>
+                {
+                    b.Property<int>("FavoriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BlogPostId");
+
+                    b.Property<Guid?>("BlogPostId1");
+
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("UserId1");
+
+                    b.HasKey("FavoriteId");
+
+                    b.HasIndex("BlogPostId1");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("Favorites");
+                });
+
+            modelBuilder.Entity("Blog.Model.Entities.Tag", b =>
+                {
+                    b.Property<int>("TagId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("TagId");
+
+                    b.ToTable("Tags");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -75,6 +206,9 @@ namespace Blog.Dal.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
+
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
@@ -114,6 +248,8 @@ namespace Blog.Dal.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -184,6 +320,71 @@ namespace Blog.Dal.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Blog.Model.Entities.User", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<string>("About");
+
+                    b.Property<string>("FirstName");
+
+                    b.Property<string>("JobTitle");
+
+                    b.Property<string>("LastName");
+
+                    b.Property<string>("PictureUrl");
+
+                    b.ToTable("User");
+
+                    b.HasDiscriminator().HasValue("User");
+                });
+
+            modelBuilder.Entity("Blog.Model.Entities.BlogPost", b =>
+                {
+                    b.HasOne("Blog.Model.Entities.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Blog.Model.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById1");
+
+                    b.HasOne("Blog.Model.Entities.User", "LastModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("LastModifiedById1");
+                });
+
+            modelBuilder.Entity("Blog.Model.Entities.Comment", b =>
+                {
+                    b.HasOne("Blog.Model.Entities.BlogPost", "BlogPost")
+                        .WithMany()
+                        .HasForeignKey("BlogPostId1");
+
+                    b.HasOne("Blog.Model.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById1");
+
+                    b.HasOne("Blog.Model.Entities.User", "LastModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("LastModifiedById1");
+
+                    b.HasOne("Blog.Model.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
+                });
+
+            modelBuilder.Entity("Blog.Model.Entities.Favorite", b =>
+                {
+                    b.HasOne("Blog.Model.Entities.BlogPost", "BlogPost")
+                        .WithMany()
+                        .HasForeignKey("BlogPostId1");
+
+                    b.HasOne("Blog.Model.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
