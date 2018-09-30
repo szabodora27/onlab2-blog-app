@@ -19,6 +19,29 @@ namespace Blog.Dal.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Blog.Dal.Logging.EventLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("ID")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("CreatedTime");
+
+                    b.Property<int?>("EventId")
+                        .HasColumnName("EventID");
+
+                    b.Property<string>("LogLevel")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(4000);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EventLog");
+                });
+
             modelBuilder.Entity("Blog.Model.Entities.BlogPost", b =>
                 {
                     b.Property<Guid>("Id")

@@ -9,13 +9,13 @@ namespace Blog.Model.Entities
 
         public Guid CreatedById { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public User CreatedBy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ApplicationUser CreatedBy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public DateTime CreatedDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public Guid LastModifiedById { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public User LastModifiedBy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ApplicationUser LastModifiedBy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public DateTime LastModifiedDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

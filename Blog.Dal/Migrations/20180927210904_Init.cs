@@ -67,6 +67,22 @@ namespace Blog.Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EventLog",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    EventID = table.Column<int>(nullable: true),
+                    LogLevel = table.Column<string>(maxLength: 50, nullable: true),
+                    Message = table.Column<string>(maxLength: 4000, nullable: true),
+                    CreatedTime = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventLog", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tags",
                 columns: table => new
                 {
@@ -405,6 +421,9 @@ namespace Blog.Dal.Migrations
 
             migrationBuilder.DropTable(
                 name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "EventLog");
 
             migrationBuilder.DropTable(
                 name: "Favorites");

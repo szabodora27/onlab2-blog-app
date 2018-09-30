@@ -2,7 +2,7 @@
 
 namespace Blog.Model.Entities
 {
-    public class User : IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         public string FirstName { get; set; }
 

@@ -6,13 +6,13 @@ namespace Blog.Model.ModelInterfaces
     {
         TKey CreatedById { get; set; }
 
-        User CreatedBy { get; set; }
+        ApplicationUser CreatedBy { get; set; }
 
         DateTime CreatedDate { get; set; }
 
         TKey LastModifiedById { get; set; }
 
-        User LastModifiedBy { get; set; }
+        ApplicationUser LastModifiedBy { get; set; }
 
         DateTime LastModifiedDate { get; set; }
     }

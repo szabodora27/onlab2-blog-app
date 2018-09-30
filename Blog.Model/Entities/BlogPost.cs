@@ -14,7 +14,7 @@ namespace Blog.Model.Entities
 
         public int CreatedById { get; set; }
 
-        public User CreatedBy { get; set; }
+        public ApplicationUser CreatedBy { get; set; }
 
         public string Content { get; set; }
 

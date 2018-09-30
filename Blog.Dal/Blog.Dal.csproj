@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Blog.Model\Blog.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EntityTypeConfigurations\" />
+  </ItemGroup>
+
 </Project>

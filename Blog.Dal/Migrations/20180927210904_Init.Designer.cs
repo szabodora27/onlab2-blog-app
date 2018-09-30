@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blog.Dal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180920213838_Init")]
+    [Migration("20180927210904_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,29 @@ namespace Blog.Dal.Migrations
                 .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Blog.Dal.Logging.EventLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("ID")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("CreatedTime");
+
+                    b.Property<int?>("EventId")
+                        .HasColumnName("EventID");
+
+                    b.Property<string>("LogLevel")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(4000);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EventLog");
+                });
 
             modelBuilder.Entity("Blog.Model.Entities.BlogPost", b =>
                 {
