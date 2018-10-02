@@ -2,5 +2,9 @@
   {
     "outputFile": "wwwroot/less/Site.css",
     "inputFile": "wwwroot/less/Site.less"
+  },
+  {
+    "outputFile": "wwwroot/js/site.es5.js",
+    "inputFile": "wwwroot/js/site.js"
   }
 ]
