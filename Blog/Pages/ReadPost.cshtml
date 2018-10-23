@@ -1,0 +1,138 @@
+﻿@page "{id:Guid}"
+@model Blog.Pages.ReadPostModel
+
+@using Blog.Model.Entities
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "ReadPost";
+}
+
+@Html.AntiForgeryToken()
+
+<div class="post-page">
+    <div class="row">
+        <div class="col col-md-8 left-side">
+            <section id="post">
+                <h2 class="post-title">
+                    @Model.Post.Title
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        if (Model.Post.CreatorId == @UserManager.GetUserId(User))
+                        {
+                            <a asp-area="MyBlog" asp-page="/EditPost" asp-route-id="@Model.Post.Id" class="icon"><i class="fa fa-edit"></i></a>
+                            <a asp-page-handler="Delete" class="icon"><i class="fa fa-trash"></i></a>
+                        }
+                        else
+                        {
+                            <input type="checkbox" asp-for="@Model.Post.IsFavorite" />
+                            <label asp-for="@Model.Post.IsFavorite">&nbsp;</label>
+                        }
+                    }
+                </h2>
+                <p class="post-subtitle">Írta: <a asp-page="/About" asp-route-id="@Model.Post.CreatorId">@Model.Post.CreatorName</a> | @Model.Comments.Count() hozzászólás</p>
+                <img src="@Model.Post.FeaturedImageUrl" />
+                <div class="content">
+                    @Html.Raw(Model.Post.Content)
+                </div>
+            </section>
+            <hr />
+            <section id="recommended-posts">
+                <h4 class="section-title">Tovább is van...</h4>
+                <div class="row">
+                    @foreach (var post in Model.RecommendedPosts)
+                    {
+                        <div class="col-md-6 col-12 post-col">
+                            <div class="post-index-container">
+                                <a asp-page="/ReadPost" asp-route-id="@post.Id">
+                                    <div class="post-index">
+                                        <div class="post-img" style="background-image:url('@post.FeaturedImageUrl')"></div>
+                                        <h5 class="post-title">@post.Title</h5>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+            <hr />
+            <section id="comments">
+                <h4 class="section-title">Hozzászólások</h4>
+                <form method="POST">
+                    <textarea asp-for="CommentText"></textarea>
+                    <br />
+                    <input type="submit" asp-page-handler="CreateComment" class="btn" value="Hozzászólok" />
+                </form>
+                @foreach (var comment in Model.Comments)
+                {
+                    <div class="comment">
+                        <p><i>@comment.CreatorName mondta (@comment.CreatedDate)</i></p>
+                        <p class="content">"@comment.Text"</p>
+                    </div>
+                }
+            </section>
+        </div>
+        <div class="col col-md-4 right-side">
+            <div class="row">
+                <div class="col-12">
+                    <h6>Mi ez?</h6>
+                    <p>
+                        Tarts velünk és alakíts ki te is egy olyan életet, amiben egyszerre lehetsz határozott, laza és szabad. Mert érsz annyit, hogy tegyél magadért.
+                        Megosztunk olyan praktikus módszereket, amikkel mások konzerv-megoldásait a saját utadra cserélheted.
+                    </p>
+                    <hr />
+                    <h6>Ezt láttad már?</h6>
+                    <div class="row">
+                        @foreach (var post in Model.RecommendedPosts)
+                        {
+                            <div class="col-12 post-col">
+                                <div class="post-index-container">
+                                    <a asp-page="/ReadPost" asp-route-id="@post.Id">
+                                        <div class="post-index">
+                                            <div class="post-img" style="background-image:url('@post.FeaturedImageUrl')"></div>
+                                            <h5 class="post-title">@post.Title</h5>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <hr />
+                    <h6>Mit keresel?</h6>
+                    <form asp-page="./SearchResult" method="get">
+                        <div class="form-actions no-color">
+                            <p>
+                                <input type="text" name="SearchString" />
+                            </p>
+                        </div>
+                    </form>
+                    <hr />
+                    <h6>Jogi nyilatkozatok</h6>
+                    <p>Kérlek, a blog tartalmát ne másold, ne jelentesd meg más online és offline felületen.</p>
+                    <p>Életmód blog egyedi szöveges és képi tartalom © Copyright 2018</p>
+                    <p>Minden jog fenntartva!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $('h2.post-title input[type="checkbox"]').on("change", function () {
+            $.ajax({
+                type: "POST",
+                url: "/ReadPost/@Model.Post.Id?handler=Like&value=" + $(this).prop('checked'),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                contentType: "application/json",
+                dataType: "json",
+                failure: function (response) {
+                    console.log(response);
+                }
+            });
+        });
+    </script>
+}

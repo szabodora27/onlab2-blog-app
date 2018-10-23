@@ -5,20 +5,20 @@ namespace Blog.Model.Entities
 {
     public class EntityBase : IAuditable<Guid>, ISoftDelete
     {
-        public Guid Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Guid Id { get; set; }
 
-        public Guid CreatedById { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string CreatedById { get; set; }
 
-        public ApplicationUser CreatedBy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ApplicationUser CreatedBy { get; set; }
 
-        public DateTime CreatedDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime CreatedDate { get; set; }
 
-        public Guid LastModifiedById { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string LastModifiedById { get; set; }
 
-        public ApplicationUser LastModifiedBy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ApplicationUser LastModifiedBy { get; set; }
 
-        public DateTime LastModifiedDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime? LastModifiedDate { get; set; }
 
-        public bool IsDeleted { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsDeleted { get; set; }
     }
 }

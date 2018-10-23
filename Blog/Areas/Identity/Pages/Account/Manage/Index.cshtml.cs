@@ -1,14 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Blog.Bll.Interfaces;
 using Blog.Model.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace Blog.Areas.Identity.Pages.Account.Manage
 {
@@ -17,17 +21,21 @@ namespace Blog.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly IUserService _userService;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _userService = userService;
         }
 
+        [Display(Name = "Felhasználónév")]
         public string Username { get; set; }
 
         public bool IsEmailConfirmed { get; set; }
@@ -38,14 +46,26 @@ namespace Blog.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
+        [BindProperty]
+        public IFormFile AboutImage { get; set; }
+
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage = "Az e-mail cím megadása kötelező")]
             [EmailAddress]
+            [Display(Name ="E-mail cím")]
             public string Email { get; set; }
 
+            [Display(Name = "Bemutatkozás")]
+            public string About { get; set; }
+
+            public string AboutImageUrl { get; set; }
+
+            [Display(Name = "Munkakör")]
+            public string JobTitle { get; set; }
+
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Telefonszám")]
             public string PhoneNumber { get; set; }
         }
 
@@ -59,6 +79,9 @@ namespace Blog.Areas.Identity.Pages.Account.Manage
 
             var userName = await _userManager.GetUserNameAsync(user);
             var email = await _userManager.GetEmailAsync(user);
+            var about = await _userService.GetAboutAsync();
+            var jobtitle = await _userService.GetJobTitleAsync();
+            var image = await _userService.GetPictureUrlAsync();
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Username = userName;
@@ -66,6 +89,9 @@ namespace Blog.Areas.Identity.Pages.Account.Manage
             Input = new InputModel
             {
                 Email = email,
+                About = about,
+                AboutImageUrl = image,
+                JobTitle = jobtitle,
                 PhoneNumber = phoneNumber
             };
 
@@ -95,6 +121,40 @@ namespace Blog.Areas.Identity.Pages.Account.Manage
                 {
                     var userId = await _userManager.GetUserIdAsync(user);
                     throw new InvalidOperationException($"Unexpected error occurred setting email for user with ID '{userId}'.");
+                }
+            }
+            
+            if (AboutImage != null)
+            {
+                ResizeAndSaveImage(AboutImage, 900);
+
+                var setPictureResult = await _userService.SetPictureUrlAsync($"/uploads/{AboutImage.FileName}");
+                if (!setPictureResult.Succeeded)
+                {
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    throw new InvalidOperationException($"Unexpected error occurred setting about for user with ID '{userId}'.");
+                }
+            }
+
+            var jobtitle = await _userService.GetJobTitleAsync();
+            if (Input.JobTitle != jobtitle)
+            {
+                var setJobTitleResult = await _userService.SetJobTitleAsync(Input.JobTitle);
+                if (!setJobTitleResult.Succeeded)
+                {
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    throw new InvalidOperationException($"Unexpected error occurred setting about for user with ID '{userId}'.");
+                }
+            }
+
+            var about = await _userService.GetAboutAsync();
+            if (Input.About != about)
+            {
+                var setAboutResult = await _userService.SetAboutAsync(Input.About);
+                if (!setAboutResult.Succeeded)
+                {
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    throw new InvalidOperationException($"Unexpected error occurred setting about for user with ID '{userId}'.");
                 }
             }
 
@@ -143,6 +203,19 @@ namespace Blog.Areas.Identity.Pages.Account.Manage
 
             StatusMessage = "Verification email sent. Please check your email.";
             return RedirectToPage();
+        }
+
+        [NonHandler]
+        private void ResizeAndSaveImage(IFormFile file, int maxWidth)
+        {
+            using (Image<Rgba32> image = Image.Load(file.OpenReadStream()))
+            {
+                if (image.Width > maxWidth)
+                {
+                    image.Mutate(ctx => ctx.Resize(maxWidth, (image.Height / image.Width) * maxWidth));
+                }
+                image.Save(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", file.FileName));
+            }
         }
     }
 }

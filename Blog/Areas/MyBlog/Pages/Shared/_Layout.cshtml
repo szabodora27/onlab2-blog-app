@@ -1,0 +1,29 @@
+﻿@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+<div>
+    <div class="row justify-content-center">
+        <div class="col-auto ">
+            <ul id="nav-account" class="nav">
+                <li class="nav-item">
+                    <a asp-page="/Account/Manage/Index" asp-area="Identity" class="nav-link grow-up @ManageAccountNavPages.ProfilNavClass(ViewContext)">Profil</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-page="/Favorites" asp-area="MyBlog" class="nav-link grow-up @ManageAccountNavPages.FavoritesNavClass(ViewContext)">Kedvencek</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-page="/Posts" asp-area="MyBlog" class="nav-link grow-up @ManageAccountNavPages.BlogPostsNavClass(ViewContext)">Blog</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

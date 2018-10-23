@@ -1,12 +1,14 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="hu">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Blog</title>
+    <title>Életmód blog</title>
 
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/twitter-bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/font-awesome/css/font-awesome.css" />
         <link rel="stylesheet" href="~/less/Site.css" />
     </environment>
     <environment exclude="Development">
@@ -14,38 +16,49 @@
               asp-fallback-href="~/lib/twitter-bootstrap/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/less/Site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/font-awesome/css/font-awesome.min.css" asp-append-version="true" />
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a asp-page="/Index" class="navbar-brand">Blog</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a asp-page="/Index" class="nav-link">Home</a></li>
-                <li class="nav-item"><a asp-page="/About" class="nav-link" >About</a></li>
-                <li class="nav-item"><a asp-page="/Contact" class="nav-link" >Contact</a></li>
-            </ul>
-            <partial name="_LoginPartial" />
-        </div>
-    </nav>
-
+    <div id="background"></div>
     <partial name="_CookieConsentPartial" />
 
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2018 - Blog</p>
-        </footer>
+    <div class="site-container body-content">
+        <div class="wrap1">
+            <div class="wrap2">
+                <partial name="_LoginPartial" />
+                <div class="logo-container">
+                    <a asp-page="/Index" class="navbar-brand">
+                        <img src="~/images/logo.png" class="page-logo" />
+                    </a>
+                </div>
+                <nav id="nav-primary" class="navbar navbar-expand-lg navbar-light" data-toggle="affix">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a asp-page="/PostsInCategory" asp-route-categoryId="1" class="nav-link">Inspiráció</a></li>
+                            <li class="nav-item"><a asp-page="/PostsInCategory" asp-route-categoryId="2" class="nav-link">Munka</a></li>
+                            <li class="nav-item"><a asp-page="/PostsInCategory" asp-route-categoryId="3" class="nav-link">Otthon</a></li>
+                            <li class="nav-item"><a asp-page="/PostsInCategory" asp-route-categoryId="4" class="nav-link">Test&Lélek</a></li>
+                            <li class="nav-item"><a asp-page="/PostsInCategory" asp-route-categoryId="5" class="nav-link">Ünnepek</a></li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="content">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
     </div>
 
     <environment include="Development">
         <script src="~/lib/jquery/jquery.js"></script>
         <script src="~/lib/twitter-bootstrap/js/bootstrap.js"></script>
+        <script src="~/lib/jquery-validate/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="Development">
@@ -59,8 +72,10 @@
                 asp-fallback-src="~/lib/twitter-bootstrap/js/bootstrap.min.js"
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
                 crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+                integrity="sha384-Tc5IQib027qvyjSMfH7jOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
         </script>
+        <script src="~/lib/jquery-validate/jquery.validate.min.js" asp-append-version="true"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 

@@ -37,15 +37,17 @@ namespace Blog.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Az e-mail cím megadása kötelező")]
+            [EmailAddress(ErrorMessage = "Helytelen e-mail formátum")]
+            [Display(Name = "E-mail")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Az jelszó megadása kötelező")]
             [DataType(DataType.Password)]
+            [Display(Name = "Jelszó")]
             public string Password { get; set; }
 
-            [Display(Name = "Remember me?")]
+            [Display(Name = "Emlékezz rám")]
             public bool RememberMe { get; set; }
         }
 

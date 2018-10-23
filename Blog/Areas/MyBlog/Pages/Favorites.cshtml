@@ -1,0 +1,30 @@
+﻿@page
+@model FavoritesModel
+
+<h2 class="page-title">Kedvenc bejegyzéseim</h2>
+<hr />
+<div class="container posts">
+    @if (Model.Posts.Count() == 0)
+    {
+        <p>Nincs ilyen kategóriába eső blogbejegyzés</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var post in Model.Posts)
+            {
+                <div class="col-4 post-col">
+                    <div class="post-index-container">
+                        <a asp-page="/ReadPost" asp-route-id="@post.Id">
+                            <div class="post-index">
+                                <div class="post-img" style="background-image:url('@post.FeaturedImageUrl')"></div>
+                                <h5 class="post-title">@post.Title</h5>
+                                <h6 class="created-by"><span>by </span>@post.CreatedBy</h6>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

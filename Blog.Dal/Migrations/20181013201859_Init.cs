@@ -54,16 +54,17 @@ namespace Blog.Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
+                name: "Category",
                 columns: table => new
                 {
                     CategoryId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.CategoryId);
+                    table.PrimaryKey("PK_Category", x => x.CategoryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -80,19 +81,6 @@ namespace Blog.Dal.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EventLog", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tags",
-                columns: table => new
-                {
-                    TagId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tags", x => x.TagId);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,87 +190,102 @@ namespace Blog.Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BlogPosts",
+                name: "BlogPost",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    LastModifiedById = table.Column<Guid>(nullable: false),
-                    LastModifiedById1 = table.Column<string>(nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    LastModifiedById = table.Column<string>(nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    Title = table.Column<string>(nullable: true),
-                    FeaturedImage = table.Column<string>(nullable: true),
-                    CategoryId = table.Column<int>(nullable: false),
-                    CreatedById = table.Column<int>(nullable: false),
-                    CreatedById1 = table.Column<string>(nullable: true),
-                    Content = table.Column<string>(nullable: true),
-                    Attachments = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false)
+                    Title = table.Column<string>(nullable: false),
+                    FeaturedImageUrl = table.Column<string>(nullable: true),
+                    CategoryId = table.Column<int>(nullable: true),
+                    Content = table.Column<string>(nullable: false),
+                    Attachments = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlogPosts", x => x.Id);
+                    table.PrimaryKey("PK_BlogPost", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BlogPosts_Categories_CategoryId",
+                        name: "FK_BlogPost_Category_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "Categories",
+                        principalTable: "Category",
                         principalColumn: "CategoryId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_BlogPosts_AspNetUsers_CreatedById1",
-                        column: x => x.CreatedById1,
+                        name: "FK_BlogPost_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_BlogPosts_AspNetUsers_LastModifiedById1",
-                        column: x => x.LastModifiedById1,
+                        name: "FK_BlogPost_AspNetUsers_LastModifiedById",
+                        column: x => x.LastModifiedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Comments",
+                name: "Tag",
+                columns: table => new
+                {
+                    TagId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    CategoryId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tag", x => x.TagId);
+                    table.ForeignKey(
+                        name: "FK_Tag_Category_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Category",
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comment",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    CreatedById = table.Column<Guid>(nullable: false),
-                    CreatedById1 = table.Column<string>(nullable: true),
+                    CreatedById = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
-                    LastModifiedById = table.Column<Guid>(nullable: false),
-                    LastModifiedById1 = table.Column<string>(nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(nullable: false),
+                    LastModifiedById = table.Column<string>(nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    BlogPostId = table.Column<int>(nullable: false),
-                    BlogPostId1 = table.Column<Guid>(nullable: true),
+                    BlogPostId = table.Column<Guid>(nullable: false),
                     UserId = table.Column<int>(nullable: false),
                     UserId1 = table.Column<string>(nullable: true),
                     Text = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.PrimaryKey("PK_Comment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_BlogPosts_BlogPostId1",
-                        column: x => x.BlogPostId1,
-                        principalTable: "BlogPosts",
+                        name: "FK_Comment_BlogPost_BlogPostId",
+                        column: x => x.BlogPostId,
+                        principalTable: "BlogPost",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Comments_AspNetUsers_CreatedById1",
-                        column: x => x.CreatedById1,
+                        name: "FK_Comment_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Comments_AspNetUsers_LastModifiedById1",
-                        column: x => x.LastModifiedById1,
+                        name: "FK_Comment_AspNetUsers_LastModifiedById",
+                        column: x => x.LastModifiedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Comments_AspNetUsers_UserId1",
+                        name: "FK_Comment_AspNetUsers_UserId1",
                         column: x => x.UserId1,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -290,31 +293,78 @@ namespace Blog.Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Favorites",
+                name: "Favorite",
                 columns: table => new
                 {
                     FavoriteId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    BlogPostId = table.Column<int>(nullable: false),
-                    BlogPostId1 = table.Column<Guid>(nullable: true),
-                    UserId = table.Column<int>(nullable: false),
-                    UserId1 = table.Column<string>(nullable: true)
+                    BlogPostId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Favorites", x => x.FavoriteId);
+                    table.PrimaryKey("PK_Favorite", x => x.FavoriteId);
                     table.ForeignKey(
-                        name: "FK_Favorites_BlogPosts_BlogPostId1",
-                        column: x => x.BlogPostId1,
-                        principalTable: "BlogPosts",
+                        name: "FK_Favorite_BlogPost_BlogPostId",
+                        column: x => x.BlogPostId,
+                        principalTable: "BlogPost",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Favorites_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Favorite_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Category",
+                columns: new[] { "CategoryId", "Description", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Egy csók a múzsától, ihlet különleges alkalmakra és hétköznapokra. Ha úgy érzed, kell egy kis friss energia...", "Inspiráció" },
+                    { 2, "Hogyan férjen bele minden 24 órába? Tippek és ötletek munkához és iskolához, sikertörténetek és 'szeretem a munkám'-cikkek.", "Munka" },
+                    { 3, "Csinosítjuk, rendben tartjunk, belakjuk, magunkévá tesszük, megosztjuk, haza megyünk.", "Otthon" },
+                    { 4, null, "Test&Lélek" },
+                    { 5, null, "Ünnepek" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Tag",
+                columns: new[] { "TagId", "CategoryId", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, "Motiváció" },
+                    { 28, 5, "Vendégvárás" },
+                    { 27, 5, "Karácsony" },
+                    { 26, 5, "Húsvéti ötlettár" },
+                    { 25, 5, "Esküvő" },
+                    { 24, 4, "Zöld" },
+                    { 23, 4, "Utazás" },
+                    { 22, 4, "Szerelem" },
+                    { 21, 4, "Szépség" },
+                    { 20, 4, "Mozgás" },
+                    { 19, 4, "Egészség" },
+                    { 18, 4, "Divat&Stílus" },
+                    { 17, 3, "Takarítás" },
+                    { 16, 3, "Rendszerezés" },
+                    { 15, 3, "Lomtalanítás" },
+                    { 14, 3, "Lakberendezés" },
+                    { 13, 3, "Kreatív" },
+                    { 12, 3, "Kert&Növények" },
+                    { 11, 3, "Gasztro" },
+                    { 10, 3, "Dekoráció" },
+                    { 9, 3, "Család" },
+                    { 8, 3, "Állatok" },
+                    { 7, 2, "Tanulás" },
+                    { 6, 2, "S.O.S vizsgaidőszak" },
+                    { 5, 2, "Szeretem a munkám" },
+                    { 4, 1, "Miért ne?" },
+                    { 3, 1, "Kihívás" },
+                    { 2, 1, "Megint hétfő" },
+                    { 29, 5, "Születésnap" },
+                    { 30, 5, "Névnap" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -357,49 +407,54 @@ namespace Blog.Dal.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlogPosts_CategoryId",
-                table: "BlogPosts",
+                name: "IX_BlogPost_CategoryId",
+                table: "BlogPost",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlogPosts_CreatedById1",
-                table: "BlogPosts",
-                column: "CreatedById1");
+                name: "IX_BlogPost_CreatedById",
+                table: "BlogPost",
+                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlogPosts_LastModifiedById1",
-                table: "BlogPosts",
-                column: "LastModifiedById1");
+                name: "IX_BlogPost_LastModifiedById",
+                table: "BlogPost",
+                column: "LastModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_BlogPostId1",
-                table: "Comments",
-                column: "BlogPostId1");
+                name: "IX_Comment_BlogPostId",
+                table: "Comment",
+                column: "BlogPostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_CreatedById1",
-                table: "Comments",
-                column: "CreatedById1");
+                name: "IX_Comment_CreatedById",
+                table: "Comment",
+                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_LastModifiedById1",
-                table: "Comments",
-                column: "LastModifiedById1");
+                name: "IX_Comment_LastModifiedById",
+                table: "Comment",
+                column: "LastModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_UserId1",
-                table: "Comments",
+                name: "IX_Comment_UserId1",
+                table: "Comment",
                 column: "UserId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Favorites_BlogPostId1",
-                table: "Favorites",
-                column: "BlogPostId1");
+                name: "IX_Favorite_BlogPostId",
+                table: "Favorite",
+                column: "BlogPostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Favorites_UserId1",
-                table: "Favorites",
-                column: "UserId1");
+                name: "IX_Favorite_UserId",
+                table: "Favorite",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tag_CategoryId",
+                table: "Tag",
+                column: "CategoryId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -420,25 +475,25 @@ namespace Blog.Dal.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Comments");
+                name: "Comment");
 
             migrationBuilder.DropTable(
                 name: "EventLog");
 
             migrationBuilder.DropTable(
-                name: "Favorites");
+                name: "Favorite");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "Tag");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "BlogPosts");
+                name: "BlogPost");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Category");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

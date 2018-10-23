@@ -1,9 +1,50 @@
-﻿@page
+﻿@page "{id}"
 @model AboutModel
 @{
     ViewData["Title"] = "About";
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@Model.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<section id="about-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-auto">
+                @if (Model.PictureUrl != null)
+                {
+                    <div class="img" style="background-image:url('@Model.PictureUrl')"></div>
+                }
+                else
+                {
+                    <div class="img" style="background-image:url(../wwwroot/images/placeholder.png)"></div>
+                }
+            </div>
+            <div class="col">
+                <h2>@Model.Name</h2>
+                <h5>@Model.JobTitle</h5>
+                <a><i class="fa fa-rss"></i></a>
+            </div>
+            <div class="w-100"></div>
+            <div class="col-12">
+                <p class="about">@Model.About</p>
+            </div>
+        </div>
+        <hr />
+        <h4 class="section-title">@Model.Name írta</h4>
+        <div class="row">
+            @foreach (var post in Model.Posts)
+            {
+                <div class="col-4">
+                    <div class="post-index-container">
+                        <a asp-page="/ReadPost" asp-route-id="@post.Id">
+                            <div class="post-index">
+                                <div class="post-img" style="background-image:url('@post.FeaturedImageUrl')"></div>
+                                <h5 class="post-title">@post.Title</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+

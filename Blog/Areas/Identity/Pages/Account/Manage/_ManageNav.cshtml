@@ -2,13 +2,30 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<ul class="nav nav-pills nav-stacked">
-    <li class="@ManageNavPages.IndexNavClass(ViewContext)"><a asp-page="./Index">Profile</a></li>
-    <li class="@ManageNavPages.ChangePasswordNavClass(ViewContext)"><a id="change-password" asp-page="./ChangePassword">Password</a></li>
-    @if (hasExternalLogins)
-    {
-        <li class="@ManageNavPages.ExternalLoginsNavClass(ViewContext)"><a id="external-login" asp-page="./ExternalLogins">External logins</a></li>
-    }
-    <li class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)"><a asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>
-    <li class="@ManageNavPages.PersonalDataNavClass(ViewContext)"><a asp-page="./PersonalData">Personal data</a></li>
+
+<form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" method="post"></form>
+
+<ul class="nav flex-column">
+    <li class="nav-item @ManageNavPages.IndexNavClass(ViewContext)">
+        <a asp-page="./Index" class="nav-link">Profil</a>
+    </li>
+    <li class="nav-item @ManageNavPages.ChangePasswordNavClass(ViewContext)">
+        <a id="change-password" asp-page="./ChangePassword" class="nav-link">Jelszó beállítások</a>
+    </li>
+    <li class="nav-item">
+        <a id="logout" class="nav-link" href="#">Kijelentkezés</a>
+    </li>
+
+    @*@if (hasExternalLogins)
+        {
+            <li class="nav-item @ManageNavPages.ExternalLoginsNavClass(ViewContext)">
+                <a id="external-login" asp-page="./ExternalLogins" class="nav-link">External logins</a>
+            </li>
+        }*@
+    @*<li class="nav-item @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)">
+            <a asp-page="./TwoFactorAuthentication" class="nav-link">Két faktoros azonosítás</a>
+        </li>*@
+    @*<li class="nav-item @ManageNavPages.PersonalDataNavClass(ViewContext)">
+            <a asp-page="./PersonalData" class="nav-link">Személyes adatok</a>
+        </li>*@
 </ul>

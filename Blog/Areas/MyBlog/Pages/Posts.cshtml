@@ -1,0 +1,31 @@
+﻿@page
+@model BlogPostsModel
+
+<h2 class="page-title">Saját blogbejegyzéseim</h2>
+<hr />
+<div class="container posts">
+    <div class="row">
+        <div class="col-4">
+            <div class="post-index-container">
+                <div class="post-index create">
+                    <div class="post-img create">
+                        <a asp-page="/CreatePost">Új létrehozása</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @foreach (var post in Model.Blogposts)
+        {
+            <div class="col-4 post-col">
+                <div class="post-index-container">
+                    <a asp-page="/ReadPost" asp-route-id="@post.Id">
+                        <div class="post-index">
+                            <div class="post-img" style="background-image:url('@post.FeaturedImageUrl')"></div>
+                            <h5 class="post-title">@post.Title</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -40,20 +40,28 @@ namespace Blog.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
+            [Required(ErrorMessage = "Az vezetéknév megadása kötelező")]
+            [Display(Name = "Vezetéknév")]
+            public string LastName { get; set; }
+
+            [Required(ErrorMessage = "Az keresztnév megadása kötelező")]
+            [Display(Name = "Keresztnév")]
+            public string FirstName { get; set; }
+
+            [Required(ErrorMessage = "Az e-mail cím megadása kötelező")]
+            [EmailAddress(ErrorMessage = "Helytelen e-mail formátum")]
+            [Display(Name = "E-mail")]
             public string Email { get; set; }
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Az jelszó megadása kötelező")]
+            [StringLength(100, ErrorMessage = "A jelszónak legalább 6, legfeljebb 100 karakter hosszúnak kell lennie", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Jelszó")]
             public string Password { get; set; }
 
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Jelszó ismét")]
+            [Compare("Password", ErrorMessage = "Nem egyezik a korábban megadott jelszóval")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -67,7 +75,14 @@ namespace Blog.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName
+                };
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

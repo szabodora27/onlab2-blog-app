@@ -1,0 +1,100 @@
+﻿@page "{id:Guid}"
+@model EditPostModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery;
+@{
+    var antiforgeryRequestToken = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
+
+<script src="https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=4bymln9ulydwj0kskl34v23c9w7ftoiivenvrxw185foafpy"></script>
+
+<h2 class="page-title">Bejegyzés módosítása</h2>
+<hr />
+<div class="container new-post">
+    <form method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="All"></div>
+        <input hidden asp-for="Id" type="text">
+        <div class="form-group">
+            <select asp-for="CategoryId" asp-items="@(new SelectList(Model.Categories, "CategoryId", "Name"))">
+                <option value="">Válassz kategóriát!</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <div class="form-group material-design">
+                <input asp-for="Title" type="text">
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label asp-for="Title"></label>
+            </div>
+            <span asp-validation-for="Title"></span>
+        </div>
+        <div class="form-group">
+            <input hidden asp-for="FeaturedImageUrl" type="text">
+            @if (Model.FeaturedImageUrl == null)
+            {
+                <img src="~/images/placeholder.png" id="uploaded">
+            }
+            else
+            {
+                <img src="@Model.FeaturedImageUrl" id="uploaded">
+            }
+            <input asp-for="FeaturedImage" type="file" class="picture" />
+            <span asp-validation-for="FeaturedImage"></span>
+        </div>
+        <div class="form-group">
+            <textarea asp-for="Content"></textarea>
+        </div>
+        <div class="form-group text-right">
+            <button type="submit" class="btn">Mentés</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            height: 500,
+            plugins: [
+                "advlist autolink lists link image charmap print preview anchor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime media table contextmenu paste imagetools wordcount"
+            ],
+            paste_data_images: true,
+            automatic_uploads: true,
+            images_upload_url: "/MyBlog/CreatePost/TinyMceImage",
+            file_picker_types: "image",
+            images_upload_handler: function (blobInfo, success, failure) {
+                var xhr, formData;
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+                xhr.open("POST", "/MyBlog/CreatePost/TinyMceImage");
+
+                xhr.setRequestHeader('XSRF-TOKEN', @Json.Serialize(antiforgeryRequestToken));
+
+                xhr.onload = function () {
+                    var json;
+
+                    if (xhr.status != 200) {
+                        failure("HTTP Error: " + xhr.status);
+                        return;
+                    }
+
+                    json = JSON.parse(xhr.responseText);
+
+                    if (!json || typeof json.location != "string") {
+                        failure("Invalid JSON: " + xhr.responseText);
+                        return;
+                    }
+
+                    success(json.location);
+                };
+
+                formData = new FormData();
+                formData.append("file", blobInfo.blob(), blobInfo.filename());
+
+                xhr.send(formData);
+            },
+            toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+        });
+    </script>
+}

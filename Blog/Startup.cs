@@ -5,11 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Blog.Bll;
 using Microsoft.AspNetCore.Identity;
 using Blog.Model.Entities;
 using Microsoft.Extensions.Logging;
 using Blog.Dal.Logging;
+using AutoMapper;
+using Blog.Bll.Interfaces;
+using Blog.Bll.Services;
+using Blog.Dal;
 
 namespace Blog
 {
@@ -52,8 +55,15 @@ namespace Blog
                      googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
                  });
 
+            services.AddAutoMapper();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IBlogPostService, BlogPostService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

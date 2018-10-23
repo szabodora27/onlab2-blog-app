@@ -1,0 +1,85 @@
+﻿@page
+@model Blog.Pages.SearchResultModel
+
+<div class="post-page">
+    <div class="row">
+        <div class="col col-md-8 left-side">
+            <h2 class="page-title">Találatok erre: @Model.CurrentFilter</h2>
+            <hr />
+            <div class="row">
+                @foreach (var post in Model.BlogPosts)
+                {
+                    <div class="col-12 post-index">
+                        <h2 class="post-title">@post.Title</h2>
+                        <p class="post-subtitle">by <a asp-page="/About" asp-route-id="@post.CreatedById">@post.CreatedBy.LastName @post.CreatedBy.FirstName</a></p>
+                        <img src="@post.FeaturedImageUrl" />
+                        <div class="content">@Html.Raw(post.Content)</div>
+                        <a asp-page="/ReadPost" asp-route-id="@post.Id" class="btn">Tovább olvasok</a>
+                        <hr />
+                    </div>
+                }
+                <div class="col-12 text-center">
+                    @{
+                        var prevDisabled = !Model.BlogPosts.HasPreviousPage ? "disabled" : "";
+                        var nextDisabled = !Model.BlogPosts.HasNextPage ? "disabled" : "";
+                    }
+
+                    <a asp-page="./SearchResult"
+                       asp-route-pageIndex="@(Model.BlogPosts.PageIndex - 1)"
+                       asp-route-currentFilter="@Model.CurrentFilter"
+                       class="btn btn-default @prevDisabled">
+                        Előző
+                    </a>
+                    <a asp-page="./SearchResult"
+                       asp-route-pageIndex="@(Model.BlogPosts.PageIndex + 1)"
+                       asp-route-currentFilter="@Model.CurrentFilter"
+                       class="btn btn-default @nextDisabled">
+                        Következő
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col col-md-4 right-side">
+            <div class="row">
+                <div class="col-12">
+                    <h6>Mi ez?</h6>
+                    <p>
+                        Tarts velünk és alakíts ki te is egy olyan életet, amiben egyszerre lehetsz határozott, laza és szabad. Mert érsz annyit, hogy tegyél magadért.
+                        Megosztunk olyan praktikus módszereket, amikkel mások konzerv-megoldásait a saját utadra cserélheted.
+                    </p>
+                    <hr />
+                    <h6>Ezt láttad már?</h6>
+                    <div class="row">
+                        @foreach (var post in Model.RecommendedPosts)
+                        {
+                            <div class="col-12 post-col">
+                                <div class="post-index-container">
+                                    <a asp-page="/ReadPost" asp-route-id="@post.Id">
+                                        <div class="post-index">
+                                            <div class="post-img" style="background-image:url('@post.FeaturedImageUrl')"></div>
+                                            <h5 class="post-title">@post.Title</h5>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <hr />
+                    <h6>Mit keresel?</h6>
+                    <form asp-page="./SearchResult" method="get">
+                        <div class="form-actions no-color">
+                            <p>
+                                <input type="text" name="SearchString" value="@Model.CurrentFilter" />
+                            </p>
+                        </div>
+                    </form>
+                    <hr />
+                    <h6>Jogi nyilatkozatok</h6>
+                    <p>Kérlek, a blog tartalmát ne másold, ne jelentesd meg más online és offline felületen.</p>
+                    <p>Életmód blog egyedi szöveges és képi tartalom © Copyright 2018</p>
+                    <p>Minden jog fenntartva!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
